@@ -4,13 +4,15 @@ import axios from "axios";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import Contexto from "../Contexto"
-import Topo from "../Components/Topo";
-import Menu from "../Components/Menu";
+import Topo from "./Topo";
+import Menu from "./Menu";
 
 
 
 export default function Historico() {
     const { loginData, setPercentage, percentage } = useContext(Contexto);
+    const navigate = useNavigate()
+   
 
     return (
         <>

@@ -14,10 +14,10 @@ export default function App() {
         email: "",
         password: "",
       });
-      const [percentage, setPercentage] = useState(0);
+      const [percentage, setPercentage] = useState(50);
       const [createCardData, setCreateCardData] = useState({
         name: "",
-        //days: standardDays,
+        
         days: '',
       });
     
@@ -35,8 +35,6 @@ console.log(loginData)
             setLoginData,
             percentage,
             setPercentage,
-            createCardData,
-            setCreateCardData,
           }}
         >
 

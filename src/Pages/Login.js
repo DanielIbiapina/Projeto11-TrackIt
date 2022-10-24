@@ -4,23 +4,32 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import  Contexto  from "../Contexto";
+import Contexto from "../Contexto";
+import { Oval } from 'react-loader-spinner'
+
+
+
+
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [senha, setSenha] = useState("");
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
     const { setLoginData } = useContext(Contexto);
 
-    function fazerLogin(event) {
-        event.preventDefault(); 
 
+
+    function fazerLogin(event) {
+        event.preventDefault();
+        setLoading(true)
         const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", {
             email: email,
             password: senha
         })
 
         requisicao.then(resposta => {
+            setLoading(false)
             alert('oi, deu certo')
             setLoginData(resposta.data)
             console.log(resposta.data)
@@ -31,7 +40,7 @@ export default function Login() {
             alert('erro')
             console.log(erro.response.data);
         });
-        
+
     }
 
     return (
@@ -42,13 +51,35 @@ export default function Login() {
             <Form onSubmit={fazerLogin}>
                 <Input type="email" placeholder="email" value={email} onChange={e => setEmail(e.target.value)} />
                 <Input type="password" placeholder="senha" value={senha} onChange={e => setSenha(e.target.value)} />
-                <BotaoEntrar type="submit">Entrar</BotaoEntrar>
+                {loading
+                    ?
+                    <BotaoEntrar type="submit">
+                        <Oval
+                            height={40}
+                            width={40}
+                            color="#FFFFFF"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                            visible={true}
+                            ariaLabel='oval-loading'
+                            secondaryColor="#4fa94d"
+                            strokeWidth={2}
+                            strokeWidthSecondary={2}
+
+                        />
+                    </BotaoEntrar>
+                    :
+                    <BotaoEntrar type="submit">Entrar</BotaoEntrar>
+                }
             </Form>
 
             <Link to={"/cadastro"}>
+
                 <BotaoNaoTenhoConta>
                     Não tem uma conta? Cadastre-se!
                 </BotaoNaoTenhoConta>
+
+
             </Link>
         </BodyLogin>
     );

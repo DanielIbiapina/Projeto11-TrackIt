@@ -1,24 +1,83 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useState, useContext} from "react";
+import { useState, useContext, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 import Contexto from "../Contexto"
-import Topo from "../Components/Topo";
-import Menu from "../Components/Menu";
+import Topo from "./Topo";
+import Menu from "./Menu";
+import dayjs from "dayjs";
+import HabitoHoje from "./HabitoHoje";
+import updateLocale from "dayjs/plugin/updateLocale";
+
+dayjs.extend(updateLocale);
+dayjs.updateLocale("en", {
+    weekdays: [
+      "Domingo",
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado",
+    ],
+  });
 
 export default function Hoje() {
     
     const { loginData, setPercentage, percentage } = useContext(Contexto);
     console.log(loginData)
     const navigate = useNavigate()
+    const [habitosHoje, setHabitosHoje] = useState(null)
+    const todayTitle = dayjs().format("dddd[,] DD/MM");
+    const [marcado, setMarcado] = useState([])
     
+    
+
+    const config = {
+        headers: {
+          Authorization: `Bearer ${loginData.token}`,
+        },
+      };
+      
+      useEffect(() => {
+        if (loginData.token === undefined) {
+            navigate("/");
+          }
+      const promise = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", config)
+      promise.then(respost => {
+          alert('habitoHoje resgatado')
+          console.log(respost.data)
+          setHabitosHoje(respost.data)
+          
+      });
+      promise.catch(err => {
+        alert('err')
+        console.log(err.response.data);
+    });
+
+  }, []);
+    
+  if (habitosHoje === null) {
+    return 'carregando...';
+}
+
+
     return (
         <>
             <Topo />
             <BodyApp>
-                <p>Segunda, 17/05</p>
+                <p>{todayTitle}</p>
                 <h1>Nenhum hábito concluído ainda</h1>
+                {
+                habitosHoje.map((habitoHoje, index) => {
+                        return (
+    
+                            <HabitoHoje habitoHoje={habitoHoje} key={index} marcado = {marcado} setMarcado = {setMarcado} />
+                        )
+                    }
+                    )
+                }
             </BodyApp>
             <Menu />
         </>
