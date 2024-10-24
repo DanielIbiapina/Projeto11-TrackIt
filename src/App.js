@@ -13,11 +13,6 @@ export default function App() {
     password: "",
   });
   const [percentage, setPercentage] = useState(0);
-  const [createCardData, setCreateCardData] = useState({
-    name: "",
-
-    days: "",
-  });
 
   return (
     <Contexto.Provider

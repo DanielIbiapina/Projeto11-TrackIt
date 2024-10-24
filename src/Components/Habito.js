@@ -32,7 +32,7 @@ export default function Habito({ habito, att, setAtt, diasDaSemana }) {
   return (
     <HabitoContainer>
       <span>
-        <p>{habito.name}</p>
+        <h3>{habito.name}</h3>
         <img src={lixeiro} onClick={() => deletarHabito()} />
       </span>
       <DiasContainer>
@@ -49,13 +49,14 @@ export default function Habito({ habito, att, setAtt, diasDaSemana }) {
 const HabitoContainer = styled.div`
   box-sizing: border-box;
   padding: 10px;
-  width: 340px;
+  padding-left: 15px;
+  width: 100%;
   height: 91px;
   background: #ffffff;
   border-radius: 5px;
   margin-bottom: 10px;
 
-  p {
+  h3 {
     font-family: "Lexend Deca";
     font-style: normal;
     font-weight: 400;
@@ -75,22 +76,27 @@ const HabitoContainer = styled.div`
 `;
 
 const DiasContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
   margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
 `;
 
 const Dia = styled.div`
   width: 30px;
   height: 30px;
-  background-color: ${(props) => (props.selecionado ? "#cfc" : "#eee")};
-  color: ${(props) => (props.selecionado ? "#fff" : "#000")};
+  background-color: ${(props) => (props.selecionado ? "#cfcfcf" : "#ffffff")};
+  color: ${(props) => (props.selecionado ? "#ffffff" : "#cfcfcf")};
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 20%;
   cursor: pointer;
   transition: background-color 0.3s;
+  border: solid #cfcfcf 2px;
+  margin-right: 5px;
+  font-family: "Lexend Deca";
+  font-size: 20px;
 
   &:hover {
     background-color: ${(props) => (props.selecionado ? "#9c9" : "#ddd")};

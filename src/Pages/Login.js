@@ -32,8 +32,8 @@ export default function Login() {
     });
 
     requisicao.catch((erro) => {
-      alert("erro");
       console.log(erro.response.data);
+      setLoading(false);
     });
   }
 

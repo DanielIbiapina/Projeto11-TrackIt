@@ -25,11 +25,11 @@ dayjs.updateLocale("en", {
 
 export default function Hoje() {
   const { loginData, setPercentage, percentage } = useContext(Contexto);
-  console.log(loginData);
   const navigate = useNavigate();
   const [habitosHoje, setHabitosHoje] = useState(null);
   const todayTitle = dayjs().format("dddd[,] DD/MM");
   const [marcado, setMarcado] = useState([]);
+  const [att, setAtt] = useState(true);
 
   const config = {
     headers: {
@@ -41,19 +41,28 @@ export default function Hoje() {
     if (loginData.token === undefined) {
       navigate("/");
     }
+
     const promise = axios.get(
       "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today",
       config
     );
-    promise.then((resposta) => {
-      console.log(resposta.data);
-      setHabitosHoje(resposta.data);
-    });
-    promise.catch((err) => {
-      alert("err");
-      console.log(err.response.data);
-    });
-  }, []);
+
+    promise
+      .then((resposta) => {
+        console.log(resposta.data);
+        setHabitosHoje(resposta.data);
+
+        const novosMarcados = resposta.data
+          .filter((habito) => habito.done)
+          .map((habito) => habito.id);
+
+        setMarcado(novosMarcados);
+        setPercentage((novosMarcados.length / resposta.data.length) * 100);
+      })
+      .catch((err) => {
+        console.log(err.response.data);
+      });
+  }, [att]);
 
   if (habitosHoje === null) {
     return "carregando...";
@@ -63,18 +72,29 @@ export default function Hoje() {
     <AppContainer>
       <Topo />
       <BodyApp>
-        <p>{todayTitle}</p>
-        <h1>Nenhum hábito concluído ainda</h1>
-        {habitosHoje.map((habitoHoje, index) => {
-          return (
-            <HabitoHoje
-              habitoHoje={habitoHoje}
-              key={index}
-              marcado={marcado}
-              setMarcado={setMarcado}
-            />
-          );
-        })}
+        <TitleContainer>
+          <p>{todayTitle}</p>
+          {marcado.length === 0 ? (
+            <h1>Nenhum hábito concluído ainda</h1>
+          ) : (
+            <h4>{Math.round(percentage)}% dos hábitos concluídos</h4>
+          )}
+        </TitleContainer>
+        <HabitosHojeContainer>
+          {habitosHoje.map((habitoHoje, index) => {
+            return (
+              <HabitoHoje
+                habitoHoje={habitoHoje}
+                key={index}
+                marcado={marcado}
+                setMarcado={setMarcado}
+                numeroTotalHabitos={habitosHoje.length}
+                att={att}
+                setAtt={setAtt}
+              />
+            );
+          })}
+        </HabitosHojeContainer>
       </BodyApp>
       <Menu />
     </AppContainer>
@@ -91,15 +111,21 @@ const AppContainer = styled.div`
 `;
 
 const BodyApp = styled.div`
-  margin-top: 70px;
   margin-bottom: 70px;
   height: 100vmax;
+  max-width: 420px;
+  width: 90%;
+`;
+
+const TitleContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 95px;
+  margin-bottom: 30px;
 
   p {
-    margin-top: 98px;
     font-family: "Lexend Deca";
     font-style: normal;
     font-weight: 400;
@@ -115,4 +141,14 @@ const BodyApp = styled.div`
     line-height: 22px;
     color: #bababa;
   }
+  h4 {
+    font-family: "Lexend Deca";
+    font-style: normal;
+    font-weight: 400;
+    font-size: 17.976px;
+    line-height: 22px;
+    color: #8fc549;
+  }
 `;
+
+const HabitosHojeContainer = styled.div``;

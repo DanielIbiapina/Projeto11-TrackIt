@@ -1,64 +1,36 @@
 import Contexto from "../Contexto";
 import { useContext } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 export default function Menu() {
-  const { loginData, setPercentage, percentage } = useContext(Contexto);
+  const { percentage } = useContext(Contexto);
+  const navigate = useNavigate();
+
   return (
     <MenuContainer>
-      <Link to={"/habitos"}>
-        <h1>Hábitos</h1>
-      </Link>
+      <h1 onClick={() => navigate("/habitos")}>Hábitos</h1>
+
       <Link to={"/hoje"}>
         <HojeContainer>
           <CircularProgressbar
-            value={percentage}
-            text={`Hoje`}
-            styles={{
-              // Customize the root svg element
-              root: {},
-              // Customize the path, i.e. the "completed progress"
-              path: {
-                // Path color
-                stroke: `#FFFFFF`,
-                // Whether to use rounded or flat corners on the ends - can use 'butt' or 'round'
-                strokeLinecap: "butt",
-                // Customize transition animation
-                transition: "stroke-dashoffset 0.5s ease 0s",
-                // Rotate the path
-                transform: "rotate(0.25turn)",
-                transformOrigin: "center center",
-              },
-              // Customize the circle behind the path, i.e. the "total progress"
-              trail: {
-                // Trail color
-                stroke: "#52B6FF",
-                // Whether to use rounded or flat corners on the ends - can use 'butt' or 'round'
-                strokeLinecap: "butt",
-                // Rotate the trail
-                transform: "rotate(0.25turn)",
-                transformOrigin: "center center",
-              },
-              // Customize the text
-              text: {
-                // Text color
-                fill: "#FFFFFF",
-                // Text size
-                fontSize: "50px",
-              },
-              // Customize background - only used when the `background` prop is true
-              background: {
-                fill: "#FFFFFF",
-              },
-            }}
+            value={Math.round(percentage)}
+            text="Hoje"
+            styles={buildStyles({
+              pathColor: "#FFFFFF",
+              trailColor: "#52B6FF",
+              textColor: "#FFFFFF",
+              textSize: "20px",
+              strokeLinecap: "round",
+              backgroundColor: "#52B6FF",
+            })}
           />
         </HojeContainer>
       </Link>
-      <Link to={"/historico"}>
-        <h1>Histórico</h1>
-      </Link>
+
+      <h1 onClick={() => navigate("/historico")}>Histórico</h1>
     </MenuContainer>
   );
 }
@@ -73,28 +45,28 @@ const MenuContainer = styled.div`
   align-items: center;
   justify-content: space-around;
   max-width: 450px;
+  padding: 0 10px;
+  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
 
   h1 {
-    font-family: "Lexend Deca";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 17.976px;
-    line-height: 22px;
-    text-align: center;
+    font-family: "Lexend Deca", sans-serif;
+    font-size: 18px;
     color: #52b6ff;
-  }
-  h2 {
-    font-family: "Lexend Deca";
-    font-style: normal;
-    font-weight: 400;
-    font-size: 17.976px;
-    line-height: 22px;
+    cursor: pointer;
     text-align: center;
-    background-color: #52b6ff;
-    color: #ffffff;
   }
 `;
+
 const HojeContainer = styled.div`
-  width: 50px;
-  background-color: blue;
+  width: 91px;
+  height: 91px;
+  border-radius: 50%;
+  background-color: #52b6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -28px; /* Posiciona acima da borda do menu */
+  transform: translate(-50%);
+  font-family: "Lexend Deca", sans-serif;
 `;

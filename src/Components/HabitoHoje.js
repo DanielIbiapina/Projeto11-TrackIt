@@ -5,40 +5,70 @@ import checkk from "../Assets/checkicon.png";
 import Contexto from "../Contexto";
 import axios from "axios";
 
-export default function HabitoHoje({ habitoHoje, marcado, setMarcado }) {
+export default function HabitoHoje({
+  habitoHoje,
+  marcado,
+  setMarcado,
+  numeroTotalHabitos,
+  att,
+  setAtt,
+}) {
   const { loginData, setPercentage, percentage } = useContext(Contexto);
   const config = {
     headers: {
       Authorization: `Bearer ${loginData.token}`,
     },
   };
-  function checkHabito(dados) {
-    console.log(habitoHoje.id);
+
+  function checkHabito(dadosHabitoHoje) {
+    console.log(dadosHabitoHoje.id);
     const promise = axios.post(
-      `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitoHoje.id}/check`,
+      `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${dadosHabitoHoje.id}/check`,
+      {},
       config
     );
 
-    const novoArray = [...marcado, dados.id];
-    setMarcado(novoArray);
+    promise.then(() => {
+      const novoArray = [...marcado, dadosHabitoHoje.id];
+      setMarcado(novoArray);
+      setPercentage((marcado.length / numeroTotalHabitos) * 100);
+      setAtt(!att);
+    });
+
+    promise.catch((err) => {
+      console.log(err.response.data);
+    });
   }
 
-  function removecheckhabito(dados) {
+  function removeCheckHabito(dadosHabitoHoje) {
     const promise = axios.post(
-      `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${habitoHoje.id}/uncheck`,
+      `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${dadosHabitoHoje.id}/uncheck`,
+      {},
       config
     );
 
-    const novoArray = [...marcado, dados.id];
-    setMarcado(novoArray);
+    promise.then(() => {
+      const novoArray = marcado.filter(
+        (HabitoHojeId) => HabitoHojeId !== dadosHabitoHoje.id
+      );
+      setMarcado(novoArray);
+      setPercentage((marcado.length / numeroTotalHabitos) * 100);
+      setAtt(!att);
+    });
+
+    promise.catch((err) => {
+      console.log(err.response.data);
+    });
   }
 
-  function checkoruncheckHabito(dados) {
-    if (habitoHoje.done == false) {
-      checkHabito(dados);
-    }
-    if (habitoHoje.done == true) {
-      removecheckhabito(dados);
+  function checkOrUncheckHabito(dadosHabitoHoje) {
+    if (att === "historico") return;
+    if (!dadosHabitoHoje.done) {
+      console.log("checando");
+      checkHabito(dadosHabitoHoje);
+    } else {
+      console.log("deschecando");
+      removeCheckHabito(dadosHabitoHoje);
     }
   }
 
@@ -46,14 +76,18 @@ export default function HabitoHoje({ habitoHoje, marcado, setMarcado }) {
     <HabitoHojeContainer>
       <div>
         <h2>{habitoHoje.name}</h2>
-        <h1>
-          Sequência atual: {habitoHoje.currentSequence} dias <br />
-          Seu recorde: {habitoHoje.highestSequence} dias
-        </h1>
+        {att !== "historico" ? (
+          <h1>
+            Sequência atual: {habitoHoje.currentSequence} dias <br />
+            Seu recorde: {habitoHoje.highestSequence} dias
+          </h1>
+        ) : (
+          ""
+        )}
       </div>
       <CheckContainer
-        cor={marcado.includes(habitoHoje.id) ? "#8FC549" : "#E7E7E7"}
-        onClick={() => checkoruncheckHabito(habitoHoje)}
+        cor={habitoHoje.done ? "#8FC549" : "#E7E7E7"}
+        onClick={() => checkOrUncheckHabito(habitoHoje)}
       >
         <img src={checkk} />
       </CheckContainer>
@@ -64,7 +98,8 @@ export default function HabitoHoje({ habitoHoje, marcado, setMarcado }) {
 const HabitoHojeContainer = styled.div`
   box-sizing: border-box;
   padding: 10px;
-  width: 340px;
+  width: 100%;
+
   height: 94px;
   margin-bottom: 10px;
   background: #ffffff;

@@ -44,7 +44,6 @@ export default function Habitos() {
       config
     );
     promise.then((resposta) => {
-      console.log(resposta.data);
       setHabitos(resposta.data);
       setAdd(false);
       if (resposta.data.length != 0) {
@@ -87,6 +86,10 @@ export default function Habitos() {
     }
   }
 
+  if (habitos === null) {
+    return "carregando...";
+  }
+
   return (
     <AppContainer>
       <Topo />
@@ -100,7 +103,7 @@ export default function Habitos() {
             <Form onSubmit={salvarHabito}>
               <Input
                 type="text"
-                placeholder=" nome do hábito"
+                placeholder="nome do hábito"
                 value={textohabito}
                 onChange={(e) => setTextohabito(e.target.value)}
               />
@@ -115,10 +118,12 @@ export default function Habitos() {
                   </Dia>
                 ))}
               </DiasContainer>
-              <BotaoCancelar type="button" onClick={() => setAdd(!add)}>
-                Cancelar
-              </BotaoCancelar>
-              <BotaoSalvar type="submit">Salvar</BotaoSalvar>
+              <Botoes>
+                <BotaoCancelar type="button" onClick={() => setAdd(!add)}>
+                  Cancelar
+                </BotaoCancelar>
+                <BotaoSalvar type="submit">Salvar</BotaoSalvar>
+              </Botoes>
             </Form>
           </HabitoRascunho>
         ) : (
@@ -158,9 +163,10 @@ const AppContainer = styled.div`
 `;
 
 const BodyApp = styled.div`
-  margin-top: 70px;
   margin-bottom: 70px;
   height: 100vmax;
+  max-width: 420px;
+  width: 90%;
 
   p {
     font-family: "Lexend Deca";
@@ -183,26 +189,33 @@ const BodyApp = styled.div`
 
 const DiasContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
+
+  width: 100%;
   margin-bottom: 15px;
 `;
 
 const Dia = styled.div`
   width: 30px;
   height: 30px;
-  background-color: ${(props) => (props.selecionado ? "#cfc" : "#eee")};
-  color: ${(props) => (props.selecionado ? "#fff" : "#000")};
+  background-color: ${(props) => (props.selecionado ? "#cfcfcf" : "#ffffff")};
+  color: ${(props) => (props.selecionado ? "#fff" : "#cfcfcf")};
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 20%;
   cursor: pointer;
   transition: background-color 0.3s;
+  border: solid #cfcfcf 2px;
+  margin-right: 5px;
+  font-family: "Lexend Deca";
+  font-size: 20px;
 
   &:hover {
     background-color: ${(props) => (props.selecionado ? "#9c9" : "#ddd")};
   }
 `;
+
 const AddContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -218,6 +231,7 @@ const BotaoAdd = styled.button`
   height: 35px;
   background: #52b6ff;
   border-radius: 4.63636px;
+  border: 0;
 
   font-family: "Lexend Deca";
   font-style: normal;
@@ -227,17 +241,21 @@ const BotaoAdd = styled.button`
   color: #ffffff;
 `;
 const HabitoRascunho = styled.div`
-  width: 340px;
+  width: 100%;
   height: 180px;
   margin-bottom: 40px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  margin-top: 33px;
 `;
 const Input = styled.input`
   box-sizing: border-box;
-  width: 303px;
+  width: 100%;
   height: 45px;
   margin-bottom: 6px;
   background: #ffffff;
-  border: 1px solid #d5d5d5;
+
+  border: 2px solid #cfcfcf;
   border-radius: 5px;
   ::placeholder {
     font-family: "Lexend Deca";
@@ -245,7 +263,7 @@ const Input = styled.input`
     font-weight: 400;
     font-size: 19.976px;
     line-height: 25px;
-    color: #dbdbdb;
+    color: #cfcfcf;
   }
 `;
 
@@ -254,12 +272,18 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 33px;
-  background-color: #ffffff;
+  justify-content: space-between;
+  height: 100%;
   padding: 18px;
   border-radius: 5px;
 `;
 
+const Botoes = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding: 0px;
+`;
 const BotaoSalvar = styled.button`
   width: 84px;
   height: 35px;
@@ -275,6 +299,8 @@ const BotaoSalvar = styled.button`
   justify-content: center;
   align-items: center;
   color: #ffffff;
+  margin-left: 10px;
+  border: 0;
 `;
 const BotaoCancelar = styled.div`
   width: 84px;
